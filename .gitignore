@@ -1,2 +1,6 @@
 .idea
 cmake-build-debug
+ConsoleApplication1
+x64
+.vs
+algos.sln
