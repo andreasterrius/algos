@@ -15,6 +15,7 @@ typedef long long ll;
 #define MODL 1000000007
 
 /*
+* ACCEPTED
 Standing at XY-plane on 0,o
 Want to reach (n,n)
 
