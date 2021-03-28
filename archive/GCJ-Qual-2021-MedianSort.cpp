@@ -16,7 +16,8 @@ typedef long long ll;
 #define MODL 1000000007
 
 /*
-*    Not ac
+*    Not accepted, not completed
+    even if it does, only passes for 1st TC
     Interactive - Median Sort
 */
 int findMed(int a, int b, int c) {
