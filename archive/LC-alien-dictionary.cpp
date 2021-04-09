@@ -22,7 +22,7 @@ typedef long long ll;
 
 /*
 LC - Verifing an Alien Dictionary
-
+Accepted
 */
 
 class Solution {
@@ -30,7 +30,7 @@ public:
     bool isAlienSorted(vector<string>& words, string order) {
         unordered_map<char, int> d;
         for (int i = 0; i < order.size(); ++i) d[order[i]] = i;
-        for (int i = 0; i < words.size()-1; ++i) {
+        for (int i = 0; i < words.size() - 1; ++i) {
             string a = words[i];
             string b = words[i + 1];
             for (int j = 0; j < a.size(); ++j) {
@@ -54,7 +54,7 @@ int main() {
     //for (int i = 0; i < t; ++i) {
     //    solve(i + 1);
     //}
-    
+
     vector<string> w{
         "apple", "app"
     };
