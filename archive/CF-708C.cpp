@@ -21,7 +21,7 @@ typedef long long ll;
 #define MODL 1000000007
 
 /*
-C2. k-LCM (easy/hard version)
+C1/C2. k-LCM (easy/hard version)
 find a1 + a2 + .. + ak = n
 LCM(a1, a2, .., ak) <= n/2
 
