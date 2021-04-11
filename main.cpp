@@ -22,62 +22,87 @@ typedef long long ll;
 #define MODL 1000000007
 
 /*
-LC - Longest increasing path in a matrix
-ACCEPTED
+CF 714B, AND Sequences
+A sequence of n non-negative integers (n >= 2)
+
+10000000 123000
+10000000
+
 */
 
-struct TreeNode {
-    int val;
-    TreeNode *left;
-    TreeNode *right;
-    TreeNode() : val(0), left(nullptr), right(nullptr) {}
-    TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
-    TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
-};
- 
-class Solution {
-public:
+int find(int n, int op, vector<vector<int>> &dp) {
 
-    int maxLevel;
-    int currSum;
+    int nowN = n;
+    int nowOp = op;
+    if (dp[n][op] != 0)
+        return dp[n][op];
 
-    void dfs(TreeNode *root, int depth) {
-        if (root == nullptr) return;
-        if (depth > maxLevel) {
-            currSum = root->val;
-            maxLevel = depth;
-        }
-        else if (depth == maxLevel) {
-            currSum += root->val;
-        }
-
-        dfs(root->left, depth + 1);
-        dfs(root->right, depth + 1);
+    if (op-(10-n) >= 0) {
+        nowOp -= (10 - n);
+        nowN = 10;
+    }
+    else {
+        return 1;
     }
 
-    int deepestLeavesSum(TreeNode* root) {
-        dfs(root, 0);
-        return currSum;
+    int sum = 0;
+    if (nowN == 10) {
+        sum = find(0, nowOp, dp);
+        sum = (sum + find(1, nowOp, dp)) % MODL;
     }
-};
+    //if (sum == -1) {
+    //    cout << "logic error\n";
+    //}
+
+    //cout << n << " " << op << " " << sum << "\n"; 
+
+    dp[n][op] = sum;
+    return sum;
+}
 
 void solve(int cas) {
-  
+    int n, m;
+    scanf("%d%d", &n, &m);
+    string s = to_string(n);
+
+    //vector<int> d(1, 9);
+    //for (int i = 0; i < m; ++i) {
+    //    vector<int> t;
+    //    for (int j = 0; j < d.size(); ++j) {
+    //        d[j] += 1;
+    //        if (d[j] >= 10) {
+    //            t.push_back(1);
+    //            t.push_back(0);
+    //        }
+    //        else t.push_back(d[j]);
+    //    }
+    //    d = t;
+    //}
+    //cout << "d: " << d.size() << "\n";
+    //debuglist(d);
+
+    vector<vector<int>> dp(10, vector<int>(m+1, 0));
+
+    int ans = 0;
+    for (int i = 0; i < s.size(); ++i) {
+        int f = find(s[i] - '0', m, dp);
+        ans = (ans + f) % MODL;
+    }
+
+    printf("%d\n", ans);
 }
 
 int main() {
+    
 
-    //int t;
-    //cin >> t;
-    //for (int i = 0; i < t; ++i) {
-    //    solve(i + 1);
-    //}
 
-    TreeNode* root;
+    ////debuglist(d);
 
-    Solution S;
-    S.deepestLeavesSum(root);
-
+    int t;
+    cin >> t;
+    for (int i = 0; i < t; ++i) {
+        solve(i + 1);
+    }
 
     return 0;
 }
