@@ -22,11 +22,7 @@ typedef long long ll;
 #define MODL 1000000007
 
 /*
-CF 714B, AND Sequences
-A sequence of n non-negative integers (n >= 2)
-
-10000000 123000
-10000000
+CF 714C, EZ DP Accepted
 
 */
 
