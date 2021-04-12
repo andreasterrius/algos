@@ -22,48 +22,34 @@ typedef long long ll;
 #define MODL 1000000007
 
 /*
-2 positive integers n and k
-among all string with len n
-first k characters of latin alphabet
+a, b, c
+x > 0
+y > 0
 
 */
 void solve(int cas) {
+    int a, b, c;
+    cin >> a >> b >> c;
+    a--, b--, c--;
+    int aa = pow(10, a);
+    int bb = pow(10, b);
+    int cc = pow(10, c);
 
-    int n, k;
-    cin >> n >> k;
-
-    if (k == 1) {
-        string p = "";
-        for (int i = 0; i < n; ++i) {
-            p += "a";
-        }
-        cout << p;
-        return;
+    if (a == c || b == c) {
+        cout << aa << " " << bb << "\n";
     }
-
-    string d = "";
-    for (int i = 'a'; i < 'a'+k; ++i) {
-        for (int j = i + 1; j < 'a'+k; ++j) {
-            d.push_back(i);
-            d.push_back(j);
-        }
+    else if (a < b) {
+        cout << aa + cc << " " << bb << "\n";
     }
-
-    string ans = "";
-    int len = d.size();
-    while(n > len){
-        ans += d;
-        n -= len;
+    else {
+        cout << aa << " " << bb + cc << "\n";
     }
-    ans += d.substr(0, n);
-    cout << ans;
-
 }
 
 int main() {
     
-    int t = 1;
-    //cin >> t;
+    int t;
+    cin >> t;
     for (int i = 0; i < t; ++i) {
         solve(i + 1);
     }
