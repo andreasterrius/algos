@@ -14,48 +14,48 @@ using namespace std;
 
 typedef pair<int, int> pii;
 typedef long long ll;
-typedef unsigned long long ull;
 #define debuglist(x) for(int _i = 0; _i < x.size(); ++_i) { cout << x[_i] << " "; } cout << "\n";
 #define debugarr(arr, x, y) for(int _i = 0; _i < x; ++_i) { \
-            for(int _j = 0; _j < y; ++_j) \
-                cout << arr[_i][_j] << " "; \
-            cout << "\n"; }
+        for(int _j = 0; _j < y; ++_j) \
+            cout << arr[_i][_j] << " "; \
+        cout << "\n"; }
 #define MODL 1000000007
 
 /*
 
 */
-
+ 
 void solve(int cas) {
-    int k;
-    cin >> k;
-    vector<int> sc(k);
-    for (int i = 0; i < sc.size(); ++i) {
-        cin >> sc[i];
-    }
-    sort(sc.begin(), sc.end());
-    
-    ull mx = 0;
-    int med = sc[sc.size() / 2];
-    for (int i = 0; i < sc.size(); ++i) {
-        if (i == med) {
-            continue;
-        }
-        else if (i < med) {
-            mx = (ull)sc[med] - sc[i];
+    //even + even = photogenic
+    //odd + odd = photogenic
+    int c;
+    cin >> c;
+    vector<int> odd;
+    vector<int> even;
+    for (int i = 0; i < c; ++i) {
+        int a;
+        cin >> a;
+        if (a % 2 == 0) {
+            even.push_back(a);
         }
         else {
-            mx = ull(sc[i]) - sc[med];
+            odd.push_back(a);
         }
     }
 
-    cout << mx << "\n";
+    for (int& o : odd) {
+        cout << o << " ";
+    }
+    for (int& e : even) {
+        cout << e << " ";
+    }
+    cout << "\n";
 }
 
 int main() {
-
+    
     int t = 1;
-    //cin >> t;
+    cin >> t;
     for (int i = 0; i < t; ++i) {
         solve(i + 1);
     }
