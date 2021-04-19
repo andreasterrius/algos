@@ -23,45 +23,40 @@ typedef unsigned long long ull;
 #define MODL 1000000007
 
 /*
-0 | 0000
-1 | 0001
-2 | 0010
-3 | 0011
-4 | 0100    
-5 | 0101
-6 | 0110
-7 | 0111
-8 | 1000
-9 | 1001
-10|
-11|
-12|
-13|
-14| 1110
-15| 1111
-16|
 
-n = 3, k = 4
-0 1 1
-1 0 1
-1 1 0
-
-1 row/ column has to have a zero
+2 2 => 4
+2 4 => 
 
 */
 
-
+bool notPerfectSqure(ull a) {
+    if (a <= 0) {
+        return true;
+    }
+    ull sq = sqrt(a);
+    bool t = sq * sq == a;
+    return !(t);
+}
 
 void solve(int cas) {
-    ull n, k;
-    cin >> n >> k;
-
-    ull d = n;
-    for (int i = 1; i < k; ++i) {
-        d = (d * n) % MODL;
+    int n; 
+    cin >> n;
+    int arr[101];
+    for (int i = 0; i < n; ++i) {
+        cin >> arr[i];
     }
 
-    cout << d % MODL << "\n";
+    ull sl = 1;
+    ull sr = 1;
+    for (int i = 0; i < n; ++i) {
+        if (notPerfectSqure(arr[i])) {
+            cout << "YES\n";
+            return;
+       }
+    }
+
+    cout << "NO\n";
+    return;
 }
 
 int main() {
