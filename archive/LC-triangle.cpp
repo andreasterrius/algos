@@ -32,28 +32,37 @@ for the O(n) space just copy the last row
 
 class Solution {
 public:
-    int leastBricks(vector<vector<int>>& wall) {
+    int minimumTotal(vector<vector<int>>& triangle) {
+        if (triangle.empty() || triangle[0].empty())
+            return 0;
+        
+        if (triangle.size() == 1)
+            return triangle[0][0];
 
-        int maxWidth = -1;
-        unordered_map<int, int> ctr;
-        for (int i = 0; i < wall.size(); ++i) {
-            int width = 0;
-            for (int j = 0; j < wall[i].size(); ++j) {
-                width += wall[i][j];
-                ctr[width] += 1;
+        int mn = INT_MAX;
+        for (int i = 1; i < triangle.size(); ++i) {
+            for (int j = 0; j < triangle[i].size(); ++j) {
+                int parentLeft = j-1;
+                int parentRight = j;
+
+                int d = INT_MAX;
+                if (parentLeft >= 0) {
+                    d = min(d, triangle[i-1][parentLeft]);
+                }
+                if (parentRight < triangle[i - 1].size()) {
+                    d = min(d, triangle[i-1][parentRight]);
+                }
+                
+                triangle[i][j] += d;
+
+                if (i == triangle.size() - 1) {
+                    mn = min(triangle[i][j], mn);
+                }
             }
-            maxWidth = max(width, maxWidth);
+            debuglist(triangle[i]);
         }
 
-        int mx = 0;
-        for (auto& [k, v] : ctr) {
-            if (k == maxWidth) continue;
-            if (mx < v) {
-                mx = v;
-            }
-        }
-
-        return wall.size() - mx;
+        return mn;
     }
 };
 
@@ -73,14 +82,9 @@ int main() {
     //    {4, 1, 8 ,3},
     //};
     vector<vector<int>> t{
-        {1,2,2,1} ,
-        {3,1,2},
-        {1,3,2},
-        {2,4},
-        {3,1,2},
-        {1,3,1,1}
+        {-10},
     };
-    cout << S.leastBricks(t);
+    cout << S.minimumTotal(t);
 
     return 0;
 }
