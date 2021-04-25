@@ -1,0 +1,32 @@
+0-1 Knapsack
+
+Notable problems:
+CF-717C
+
+Problem Description:
+Given a bag capable of carrying W kg
+Find which item to take in such a way to maximize profit
+
+- Item can only be taken once
+- Item cannot be taken fractional (hence 0-1)
+
+Profit = {1, 2, 5, 6}
+Weight = {2, 3, 4, 5}
+
+2D DP, table contains maximum profit for bag weight
+
+Table V (item sorted by weight):
+
+         0 1 2 3 4 5 6 7 8 (bag weight)            
+pi wi  0 0 0 0 0 0 0 0 0 0
+1  2   1 0 0 1 1 1 1 1 1 1
+2  3   2 0 0 1 2 2 3 3 3 3
+5  4   3 0 0 1 2 5 5 6 7 7
+6  5   4 0 0 1 2 5 6 6 7 8 
+    (item)
+
+Formula:
+V(i, w) = max(V(i-1, w), V(i-1, w-w[i])+P[i])
+maximum of 
+previous row OR
+current row + maximum of item-1, given subtracted bag weight
