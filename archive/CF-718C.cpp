@@ -29,7 +29,7 @@ int gcd(int a, int b) {
 }
 
 /*
-* Fillomino 2
+* Fillomino 2 - Accepted (Editorial)
 * Fill area below diagonal
 
 Idea 1: Mathematical ?
