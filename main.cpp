@@ -29,82 +29,95 @@ int gcd(int a, int b) {
 }
 
 /*
-* LC - Unique Paths 2
-Find unique paths from top left to bottom right
-Can only move right/down
-Has some obstacles in the course
+* C
+* 
+* 
 
-0 1 1 1 
-1 2 3 4
-1 3 6 10
-1 4 10 20
+4
+8
+1 2 1 2 1 2 3 3
+6 8 3 1 5 1 2 1
 
+10
+8
+1 1 1 2 2 3 4 5  
+5 4 3 2 2 3 4 5
+
+* 
 */
 
-class Solution {
-public:
-    int uniquePathsWithObstacles(vector<vector<int>>& obstacleGrid) {
-        // Here, we just return whatever
-        if (obstacleGrid.size() == 0 || obstacleGrid[0].size() == 0)
-            return 0;
-        
-        if (obstacleGrid[0][0] == 1) 
-            return 0;
-        
-        
-        vector<vector<int>> p(obstacleGrid.size(), vector<int>(obstacleGrid[0].size(), 0));
-        p[0][0] = 1;
-        for (int i = 0; i < p.size(); ++i) {
-            for (int j = 0; j < p[i].size(); ++j) {
-                if (i == 0 && j == 0) continue;
-                if (obstacleGrid[i][j] == 1) continue;
-                int up = 0;
-                int left = 0;
-                if (i - 1 >= 0 && obstacleGrid[i-1][j] == 0) {
-                    up = p[i - 1][j];
-                }
-                if (j - 1 >= 0 && obstacleGrid[i][j - 1] == 0) {
-                    left = p[i][j - 1];
-                }
-                //cout << p[i][j] << " " << up << " " << left << "\n";
-                p[i][j] = p[i][j] + up + left;
-            }
-        }
 
-        return p.back().back();
-    }
-};
 
 void solve(int cas) {
+    int n;
+    cin >> n;
+    
+    unordered_map<int, vector<ull>> prefix(n+1);
+    unordered_map<int, vector<int>> tot(n+1);
+    
+    vector<int> uni(n+1);
+    for (int i = 0; i < n; ++i) {
+        int u;
+        cin >> u;
+        uni[i] = u;
+    }
+    for (int i = 0; i < n; ++i) {
+        int s;
+        cin >> s;
+        tot[uni[i]].push_back(s);
+        prefix[uni[i]].push_back(0);
+    }
 
+    unordered_map<int, ull> kk(tot.size());
+    int all = 0;
+    for (auto &[k, v] : tot) {
+        sort(v.begin(), v.end(), greater<int>());
+        int ans = 0;
+        for (int j = v.size() - 1; j >= 0; --j) {
+            prefix[k][j] = ans;
+            ans += v[j];
+        }
+        kk[k] = ans;
+        all += ans;
+    }
+
+    cout << all << " ";
+    int prev_ans = -1;
+    for (int k = 2; k <= n; ++k) {
+        //if (prev_ans == 0) {
+        //    cout << 0 << " ";
+        //    continue;
+        //}
+        int batch = 0;
+        vector<int> remove;
+        for (auto &[kd, v] : tot) {
+            if (v.size() < k) {
+                remove.push_back(kd);
+                continue;
+            }
+            ull thisSum = kk[kd];
+
+            int leftovers = prefix[kd].size() % k;
+            ull leftoverSum = prefix[kd][prefix[kd].size() - leftovers - 1];
+            
+            batch += (thisSum - leftoverSum);
+        }
+        for (int i = 0; i < remove.size(); ++i) {
+            tot.erase(remove[i]);
+        }
+
+        prev_ans = batch;
+        cout << batch << " ";
+    }
+    cout << "\n";
 }
 
 int main() {
-    //int t = 1;
-    ////cin >> t;
-    //for (int i = 0; i < t; ++i) {
-    //   solve(i + 1);
-    //}
-
-    /*vector<vector<int>> obs{
-        {0,0,0,0},
-        {0,0,0,0},
-        {0,0,0,0},
-        {0,0,0,0},
-    };*/
-  /*  vector<vector<int>> obs{
-        {0,0,0},
-        {0,1,0},
-        {0,1,0},
-    };*/
-    vector<vector<int>> obs{
-        {0,0},
-        {0,1},
-    };
-
-    Solution S;
-    cout << S.uniquePathsWithObstacles(obs);
-
+    int t = 1;
+    cin >> t;
+    for (int i = 0; i < t; ++i) {
+       solve(i + 1);
+    }
 
     return 0;
 }
