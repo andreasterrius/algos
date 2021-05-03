@@ -29,31 +29,55 @@ int gcd(int a, int b) {
 }
 
 /*
-* LC - Running Sum of array
+* Phoenix and Gold - Accepted
+n pieces of gold
 
+3
+3 5
+4 1 2
 
 */
 
-class Solution {
-public:
-    vector<int> runningSum(vector<int>& nums) {
-        if (nums.empty()) return {};
-        int before = 0;
-        vector<int> ans(nums.size());
-        for (int i = 0; i < nums.size(); ++i) {
-            ans[i] = nums[i] + before;
-            before = ans[i];
-        }
-        return ans;
+
+
+void solve(int cas) {
+    int n, w;
+    cin >> n >> w;
+    int sum = 0;
+    vector<int> a(n);
+    for (int i = 0; i < n; ++i) {
+        cin >> a[i];
     }
-};
+
+    sort(a.begin(), a.end());
+    for (int i = 0; i < n; ++i) {
+        sum += a[i];
+        if (sum == w && i < n - 1) {
+            sum -= a[i];
+            swap(a[i], a[i + 1]);
+            sum += a[i];
+        }
+    }
+
+    if (sum == w) {
+        cout << "NO\n";
+        return;
+    }
+
+    cout << "YES\n";
+    for (int i = 0; i < n; ++i) { 
+        cout << a[i] << " ";
+    }
+    cout << "\n";
+    
+}
 
 int main() {
-    //int t = 1;
-    //cin >> t;
-    //for (int i = 0; i < t; ++i) {
-    //    solve(i + 1);
-    //}
+    int t = 1;
+    cin >> t;
+    for (int i = 0; i < t; ++i) {
+        solve(i + 1);
+    }
     
     
     return 0;

@@ -29,31 +29,44 @@ int gcd(int a, int b) {
 }
 
 /*
-* LC - Running Sum of array
-
+* Accepted
 
 */
 
-class Solution {
-public:
-    vector<int> runningSum(vector<int>& nums) {
-        if (nums.empty()) return {};
-        int before = 0;
-        vector<int> ans(nums.size());
-        for (int i = 0; i < nums.size(); ++i) {
-            ans[i] = nums[i] + before;
-            before = ans[i];
+
+
+void solve(int cas) {
+    ull d;
+    cin >> d;
+
+    // check for 2
+    if (d % 2 == 0) {
+        ull c2 = d / 2;
+        ull c2q = sqrt(c2);
+        if (c2q * c2q == c2) {
+            cout << "YES\n";
+            return;
         }
-        return ans;
     }
-};
+
+    if (d % 4 == 0) {
+        ull c4 = d / 4;
+        ull c4q = sqrt(c4);
+        if (c4q * c4q == c4) {
+            cout << "YES\n";
+            return;
+        }
+    }
+
+    cout << "NO\n";
+}
 
 int main() {
-    //int t = 1;
-    //cin >> t;
-    //for (int i = 0; i < t; ++i) {
-    //    solve(i + 1);
-    //}
+    int t = 1;
+    cin >> t;
+    for (int i = 0; i < t; ++i) {
+        solve(i + 1);
+    }
     
     
     return 0;
