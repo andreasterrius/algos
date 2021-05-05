@@ -29,32 +29,51 @@ int gcd(int a, int b) {
 }
 
 /*
- Div 3 D
+ Div 3 C
 */
 
 void solve(int cas){
-    int k;
-    scanf("%d", &k);
-    int arr[200005];
-    for(int i = 0; i < k; ++i){
-        scanf("%d", &arr[i]);
+    int dp[101][101] = {0};
+    int d;
+    cin >> d;
+    int last = d*d;
+    int beforeLast = last-1;
+
+    if(d <= 2) {
+        cout << "-1\n";
+        return;
     }
 
-    ull ans = 0;
-    unordered_map<int, int> ctr;
-    int initial = arr[0];
-    for(int i = 0; i < k; ++i){
-        int supposed = initial + i;
-        int diff = supposed - arr[i];
+    dp[d-1][0] = beforeLast;
+    dp[0][d-1] = last;
 
-        //cout << diff << " ";
-
-        ans += ctr[diff];
-        ctr[diff] += 1;
+    int boundary = 2;
+    int a = 1;
+    for(int i = d-2; i >= 0; --i){
+        for(int j = 0; j < boundary; ++j){
+            dp[i+j][j] = a;
+            a++;
+        }
+        boundary++;
     }
 
-    //cout << "\n";
-    printf("%d\n", ans);
+    boundary = d-1;
+    for(int j = 1; j < d-1; ++j){
+       for(int i = 0; i < boundary; ++i){
+          // cout << a << " " << i << " " << j+1 << "\n"'; 
+           dp[i][j+i] = a;
+           a++;
+       }
+        boundary--;
+    }
+
+
+    for(int i = 0; i < d; ++i){
+        for(int j = 0; j < d; ++j){
+            cout << dp[i][j] << " ";
+        }
+        cout << "\n";
+    }
 }
 
 int main() {

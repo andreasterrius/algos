@@ -29,32 +29,46 @@ int gcd(int a, int b) {
 }
 
 /*
- Div 3 D
+ Div 3 B
+
+1 2 3 4 5 6 7 8 9 
+11 22 33 44 55 66 77 88 99
+111 222 333 444 555 666 777 888 999
+
 */
 
 void solve(int cas){
-    int k;
-    scanf("%d", &k);
-    int arr[200005];
-    for(int i = 0; i < k; ++i){
-        scanf("%d", &arr[i]);
+    int d;
+    cin >> d;
+
+    int init = d;
+
+    int lg = 1;
+    while(d/10 != 0){
+        d = d/10;
+        lg++;
+    }
+    
+    int until = pow(10, lg);
+    string p = "";
+    for(int i = 0; i < lg; ++i){
+        p += '1';
     }
 
-    ull ans = 0;
-    unordered_map<int, int> ctr;
-    int initial = arr[0];
-    for(int i = 0; i < k; ++i){
-        int supposed = initial + i;
-        int diff = supposed - arr[i];
-
-        //cout << diff << " ";
-
-        ans += ctr[diff];
-        ctr[diff] += 1;
+    int start = stoi(p);
+    int ctr = (lg-1) * 9;
+    for(int i = start; i < until; i += start){
+        if(i == init){
+            ctr++;
+            break;
+        }
+        else if(i > init){
+            break;
+        }
+        ctr++;
     }
 
-    //cout << "\n";
-    printf("%d\n", ans);
+    cout << ctr << endl;
 }
 
 int main() {

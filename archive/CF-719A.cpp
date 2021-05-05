@@ -29,32 +29,34 @@ int gcd(int a, int b) {
 }
 
 /*
- Div 3 D
+ Div 3 A
 */
 
 void solve(int cas){
-    int k;
-    scanf("%d", &k);
-    int arr[200005];
-    for(int i = 0; i < k; ++i){
-        scanf("%d", &arr[i]);
+    int len;
+    string d;
+    cin >> len;
+    cin >> d;
+    unordered_set<char> p;
+    char curr = d[0];
+    for(int i = 0; i < d.size(); ++i){
+        if(d[i] == curr){
+            p.insert(d[i]);
+        }
+        else {
+            // has existed before
+            if(p.find(d[i]) != p.end()){
+                cout << "NO\n";
+                return;
+            }
+            else{
+                p.insert(d[i]);
+            }
+        }
+        curr = d[i];
     }
-
-    ull ans = 0;
-    unordered_map<int, int> ctr;
-    int initial = arr[0];
-    for(int i = 0; i < k; ++i){
-        int supposed = initial + i;
-        int diff = supposed - arr[i];
-
-        //cout << diff << " ";
-
-        ans += ctr[diff];
-        ctr[diff] += 1;
-    }
-
-    //cout << "\n";
-    printf("%d\n", ans);
+    cout << "YES\n";
+    return;
 }
 
 int main() {
