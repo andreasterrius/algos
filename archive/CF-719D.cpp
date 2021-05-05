@@ -32,18 +32,18 @@ int gcd(int a, int b) {
  Div 3 D
 */
 
-void solve(int cas){
+void solve(int cas) {
     int k;
     scanf("%d", &k);
     int arr[200005];
-    for(int i = 0; i < k; ++i){
+    for (int i = 0; i < k; ++i) {
         scanf("%d", &arr[i]);
     }
 
     ull ans = 0;
     unordered_map<int, int> ctr;
     int initial = arr[0];
-    for(int i = 0; i < k; ++i){
+    for (int i = 0; i < k; ++i) {
         int supposed = initial + i;
         int diff = supposed - arr[i];
 
@@ -53,17 +53,16 @@ void solve(int cas){
         ctr[diff] += 1;
     }
 
-    //cout << "\n";
-    printf("%d\n", ans);
+    cout << ans << "\n";
 }
 
 int main() {
     int t = 1;
     cin >> t;
     for (int i = 0; i < t; ++i) {
-       solve(i + 1);
+        solve(i + 1);
     }
-    
-    
+
+
     return 0;
 }

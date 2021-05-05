@@ -53,8 +53,7 @@ void solve(int cas){
         ctr[diff] += 1;
     }
 
-    //cout << "\n";
-    printf("%d\n", ans);
+    cout << ans << "\n";
 }
 
 int main() {
