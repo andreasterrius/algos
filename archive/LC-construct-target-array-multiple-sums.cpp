@@ -29,33 +29,35 @@ int gcd(int a, int b) {
 }
 
 /*
- * Sieve of erasthothenes, Count Primes O(n log log n)
-
-1 2 3 4 5 6 7 8 9 10
-
-
+ * Construct Target Array With Multiple Sums, Editorial
  */
 
 class Solution {
 public:
-    int countPrimes(int n) {
-        //sieve
-        vector<bool> prime(n, true);
+    bool isPossible(vector<int>& target) {
+        priority_queue<int> pq;
+        long long sum = 0;
+        for (int i = 0; i < target.size(); ++i) {
+            pq.push(target[i]);
+            sum += target[i];
+        }
 
-        int k = sqrt(n)+1;
-        for (int i = 2; i <= k; ++i) {
-            if (!prime[i]) continue;
-            for (int j = i * i; j < n; j+=i) {
-                prime[j] = false;
+        while (!pq.empty()) {
+            int tp = pq.top(); pq.pop();
+            sum -= tp;
+
+            if (sum == 1 || tp == 1) {
+                return true;
             }
+
+            if (tp < sum || sum == 0 || tp % sum == 0)
+                return false;
+            tp %= sum;
+            sum += tp;
+            pq.push(tp);
         }
 
-        int s = 0;
-        for (int i = 2; i < n; ++i) {
-            if (prime[i]) s += 1;
-        }
-
-        return s;
+        return false;
     }
 };
 
@@ -67,10 +69,10 @@ int main() {
     //for (int i = 0; i < t; ++i) {
     //   solve(i + 1);
     //}
-    vector<int> target{ 123 };
+    vector<int> target{ 1,5 };
 
     Solution S;
-    cout << S.countPrimes(10);
+    cout << S.isPossible(target);
 
     return 0;
 }

@@ -29,7 +29,7 @@ int gcd(int a, int b) {
 }
 
 /*
- * Sieve of erasthothenes, Count Primes O(n log log n)
+ * Sieve of erasthothenes
 
 1 2 3 4 5 6 7 8 9 10
 
