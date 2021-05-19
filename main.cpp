@@ -29,52 +29,68 @@ int gcd(int a, int b) {
 }
 
 /*
-LC - binary tree cameras
-
-        C
-      A 
-    C   
-  C  A
-A  
+    LC - Word Chain
 */
 
-//   1
-// 2 
-//   3
-// 5
-//   6
-// 7
-
-//   3
-// 5
-//   6
-// 7
-
-struct TreeNode {
-    int val;
-    TreeNode *left;
-    TreeNode *right;
-    TreeNode() : val(0), left(nullptr), right(nullptr) {}
-    TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
-    TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+struct Comp {
+    bool operator()(string &a, string &b) {
+        return a.size() < b.size();
+    }
 };
- 
+
 class Solution {
 public:
-    int res = 0;
-    int minCameraCover(TreeNode* root) {
-        return (dfs(root) < 1 ? 1 : 0) + res;
+
+    vector<int> count(string &a) {
+        vector<int> dd(26, 0);
+        for (int i = 0; i < a.size(); ++i) {
+            dd[a[i]-'a'] += 1;
+        }
+        return dd;
     }
 
-    int dfs(TreeNode* root) {
-        if (root == nullptr) return 2;
-        int left = dfs(root->left);
-        int right = dfs(root->right);
-        if (left == 0 || right == 0) {
-            res++;
-            return 1;
+    bool diffOk(vector<int>& a, vector<int>& b) {
+        int s = 0;
+        int alen = 0;
+        int blen = 0;
+        for (int i = 'a'-'a'; i <= 'z'-'a'; ++i) {
+            int aa = a[i];
+            int bb = b[i];
+            alen += a[i];
+            blen += b[i];
+            s += abs(aa - bb);
+            if (s >= 2)
+                return false;
         }
-        return left == 1 || right == 1 ? 2 : 0;
+        if (abs(alen - blen) >= 2)
+            return false;
+
+        return true;
+    }
+
+    int longestStrChain(vector<string>& words) {
+        int len = words.size();
+        sort(words.begin(), words.end(), Comp());
+
+        vector<vector<int>> c(words.size()); 
+        for (int i = 0; i < words.size(); ++i) {
+            c[i] = count(words[i]);
+        }
+        
+        int mx = 0;
+        vector<int> chain(words.size(), 0);
+        for (int i = 0; i < len; ++i) {
+            for (int j = i + 1; j < len; ++j) {
+                if (!diffOk(c[i], c[j])){ 
+                    continue;
+                }
+                chain[j] = max(chain[j], chain[i] + 1);
+                mx = max(chain[j], mx);
+            }
+        }
+        debuglist(chain);
+
+        return mx+1;
     }
 };
 
@@ -86,69 +102,11 @@ int main() {
     //   solve(i + 1);
     //}
 
-    //TreeNode* r = new TreeNode(1);
-    //r->left = new TreeNode(2);
-    //r->left->right = new TreeNode(3);
-    //r->left->right->left = new TreeNode(4);
-    //r->left->right->left->right = new TreeNode(5);
-    //r->left->right->left->right->left = new TreeNode(6);
-
-    //TreeNode* r = new TreeNode(1);
-    //r->left = new TreeNode(2);
-    //r->left->right = new TreeNode(4);
-    //r->left->right->right = new TreeNode(6);
-    //r->right = new TreeNode(3);
-    //r->right->left = new TreeNode(5);
-
-    TreeNode* r = new TreeNode(1);
-    r->left = new TreeNode(2);
-    r->left->left = new TreeNode(3);
-    r->left->left->left = new TreeNode(4);
-    r->left->left->left->left = new TreeNode(5);
-    r->left->left->left->left->left = new TreeNode(6);
-
-    /*
-            1
-           2
-          3
-         4
-        5
-       6
-    */
-    
-    //TreeNode* r = new TreeNode(1);
-    //r->left = new TreeNode(2);
-    //r->left->right = new TreeNode(3);
-    //r->left->left = new TreeNode(4);
-
-    //TreeNode* r = new TreeNode(1);
-    //r->left = new TreeNode(2);
-    //r->right = new TreeNode(3);
-    //r->left->left = new TreeNode(4);
-    //r->left->right = new TreeNode(5);
-
-    //r->left->left->left = new TreeNode(6);
-    //r->left->right->right = new TreeNode(7);
-
-    //r->left->left->left->right = new TreeNode(8);
-    //r->left->left->left->right->right = new TreeNode(9);
-
-    //   1
-    // 2 
-    //   3
-    // 5
-    //   6
-    // 7
-
-    //       0
-    //     0
-    //   0
-    // 0
-
-    //cin >> t;
+    vector<string> word{
+       "a","b","ab","bac"
+    };
     Solution S;
-    cout << S.minCameraCover(r);
-    
+    cout << S.longestStrChain(word);
 
     return 0;
 }
