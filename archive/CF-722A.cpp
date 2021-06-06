@@ -29,45 +29,37 @@ int gcd(int a, int b) {
 }
 
 /*
- 4, 7, 47
-
- 4
- 7
- 44
- 47
- 74
- 77
- 444
- 447
- 474
- 477
- 744
- 747
- 774
- 777
- 4444
- 4447
- 4474
-
+    CF-EDU-109B
 */
 
-void solve() {
+void solve(int cas) {
+    int n;
+    cin >> n;
+    vector<int> arr(n);
 
+    int mn = INT_MAX;
+    for(int i = 0; i < n; ++i){
+        cin >> arr[i];
+        mn = min(mn, arr[i]);
+    }
+    
+    int sum = 0;
+    for (int i = 0; i < n; ++i) {
+        if (arr[i] == mn) {
+            sum += 1;
+        }
+    }
+
+    cout << n - sum << "\n";
 }
 
 int main() {
-    //int t = 1;
-    //cin >> t;
+    int t = 1;
+    cin >> t;
 
-    //for (int i = 0; i < t; ++i) {
-    //    solve(i + 1);
-    //}
-
-    /*
-    [3,2,1,5,6,4]
-    2
-
-    */
+    for (int i = 0; i < t; ++i) {
+        solve(i + 1);
+    }
 
     return 0;
 }
