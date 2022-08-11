@@ -6,3 +6,4 @@ x64
 algos.sln
 *.out
 .vscode/
+randomizer_meta.hpp
