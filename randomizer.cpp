@@ -21,7 +21,7 @@ const int GOOD = 15; //days
 const int EZ = 30; //days
 const int MAX_LIMIT = 10; //10 exercise to consider
 
-typedef chrono::duration<int,std::ratio<60*60*24>> days_type;
+typedef chrono::duration<int, std::ratio<60 * 60 * 24>> days_type;
 
 auto read_file(std::string_view path) -> std::string {
   constexpr auto read_size = std::size_t(4096);
@@ -40,19 +40,18 @@ auto read_file(std::string_view path) -> std::string {
 auto parse(string &file_contents) -> unordered_map<string, vector<chrono::time_point<chrono::system_clock>>> {
   vector<vector<string>> temp;
   vector<string> kek;
-  string tok = "";
+  string word = "";
   for (char file_content: file_contents) {
     if (file_content != ',') {
-      tok += file_content;
-    } else {
-      kek.push_back(tok);
-      tok = "";
-    }
-
-    if (file_content == '\n') {
+      word += file_content;
+    } else if (file_content == '\n') {
       temp.push_back(kek);
       kek.clear();
+    } else {
+      kek.push_back(word);
+      word = "";
     }
+
   }
 
   unordered_map<string, vector<chrono::time_point<chrono::system_clock>>> d;
@@ -71,14 +70,18 @@ auto parse(string &file_contents) -> unordered_map<string, vector<chrono::time_p
 }
 
 auto write(unordered_map<string, vector<chrono::time_point<chrono::system_clock>>> &contents,
-           int days,
            const string &archive_meta_path) {
   std::ofstream ofs(archive_meta_path);
   for (auto &[k, times]: contents) {
     ofs << k << ",";
-    for (auto &time: times) {
+    auto last_time = times.end();
+    for (int i = 0; i < times.size(); ++i) {
+      auto time = times[i];
       auto ktime = std::chrono::system_clock::to_time_t(time);
-      ofs << std::put_time(std::localtime(&ktime), "%b %d %Y %H:%M:%S") << ",";
+      ofs << std::put_time(std::localtime(&ktime), "%b %d %Y %H:%M:%S");
+      if (i != times.size() - 1) {
+        ofs << ",";
+      }
     }
     ofs << "\n";
   }
@@ -86,39 +89,42 @@ auto write(unordered_map<string, vector<chrono::time_point<chrono::system_clock>
 }
 
 auto select_next(unordered_map<string, vector<chrono::time_point<chrono::system_clock>>> &contents) -> string {
-  if(contents.empty()){
+  if (contents.empty()) {
     return "";
   }
-  vector<pair<int, string>> sorter;
+
+  srand(time(NULL));
+
+  // NOTE: middle int is random number to force uniform distribution given same days delta on first int
+  vector<pair<int, pair<int, string>>> sorter;
   int max_diff = 0;
-  for(auto &[s, times] : contents) {
-    if(times.size() < 2) {
-      sorter.emplace_back(INT_MAX, s);
+  for (auto &[s, times]: contents) {
+    if (times.size() < 2) {
+      sorter.push_back({INT_MAX, {rand(), s}});
     } else {
-      int delta = chrono::duration_cast<days_type>(times[times.size()-1] - times[times.size()-2]).count();
+      int delta = chrono::duration_cast<days_type>(times[times.size() - 1] - times[times.size() - 2]).count();
       max_diff = max(max_diff, delta);
-      sorter.emplace_back(delta, s);
+      sorter.push_back({delta, {rand(), s}});
     }
   }
 
-  for(auto &[days, name] : sorter) {
-    if(days == INT_MAX) {
+  for (auto &[days, name]: sorter) {
+    if (days == INT_MAX) {
       days = max_diff;
     }
   }
 
-
   sort(sorter.begin(), sorter.end());
-  srand (time(NULL));
   int ind = rand() % MAX_LIMIT;
-  if(ind > sorter.size()) ind = sorter.size()-1;
-  return sorter[ind].second;
+  if (ind > sorter.size()) ind = sorter.size() - 1;
+  return sorter[ind].second.second;
 }
 
 int main() {
 
+  string archive_meta_filename = "_archive_meta.txt";
   string path = ARCHIVE_PATH;
-  string archive_meta = string(ARCHIVE_PATH) + "/" + "_archive_meta.txt";
+  string archive_meta = string(ARCHIVE_PATH) + "/" + archive_meta_filename;
 
   if (!fs::exists(archive_meta)) {
     std::ofstream ofs(archive_meta);
@@ -138,19 +144,20 @@ int main() {
       contents[filename].push_back(std::chrono::system_clock::now());
     }
   }
+  contents.erase(archive_meta_filename);
 
   cout << "Randomizer running...\n";
 
   string selected_file = select_next(contents);
-  if(selected_file.empty()) {
+  if (selected_file.empty()) {
     cout << "No exercise found, archive folder is empty\n";
     return 0;
   }
-  if(contents.find(selected_file) == contents.end()) {
+  if (contents.find(selected_file) == contents.end()) {
     cout << selected_file << " not found in archive folder\n";
     return 0;
   }
-  cout << "Sovle this file: " << selected_file << "\n";
+  cout << "Solve this file: " << selected_file << "\n";
 
   cout << "Difficulty\n" <<
        " (1). Delayed\n" <<
@@ -188,10 +195,10 @@ int main() {
     }
   } while (shouldRun);
 
-  auto new_solved = contents[selected_file].back() + std::chrono::hours(days * 24);
+  auto new_solved = std::chrono::system_clock::now() + std::chrono::hours(days * 24);
   contents[selected_file].push_back(new_solved);
 
-  write(contents, days, archive_meta);
+  write(contents, archive_meta);
 
   return 0;
 }
