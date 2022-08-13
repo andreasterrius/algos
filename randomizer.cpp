@@ -3,6 +3,7 @@
 #include <filesystem>
 #include <fstream>
 #include <chrono>
+#include <time.h>
 #include "randomizer_meta.hpp"
 
 namespace fs = std::filesystem;
@@ -18,6 +19,9 @@ const int UNSURE = 3; //days
 const int DECENT = 7; //days
 const int GOOD = 15; //days
 const int EZ = 30; //days
+const int MAX_LIMIT = 10; //10 exercise to consider
+
+typedef chrono::duration<int,std::ratio<60*60*24>> days_type;
 
 auto read_file(std::string_view path) -> std::string {
   constexpr auto read_size = std::size_t(4096);
@@ -33,7 +37,7 @@ auto read_file(std::string_view path) -> std::string {
   return out;
 }
 
-auto parse(string &file_contents) -> unordered_map<string, vector<tpp> {
+auto parse(string &file_contents) -> unordered_map<string, vector<chrono::time_point<chrono::system_clock>>> {
   vector<vector<string>> temp;
   vector<string> kek;
   string tok = "";
@@ -51,25 +55,70 @@ auto parse(string &file_contents) -> unordered_map<string, vector<tpp> {
     }
   }
 
-  unordered_map<string, vector<time_t>> d;
-  for(int i = 0; i < temp.size(); ++i){
-    d[temp[i][0]] = vector<time_t>();
-    for(int j = 1; j < temp[i].size(); ++j){
+  unordered_map<string, vector<chrono::time_point<chrono::system_clock>>> d;
+  for (int i = 0; i < temp.size(); ++i) {
+    d[temp[i][0]] = vector<chrono::time_point<chrono::system_clock>>();
+    for (int j = 1; j < temp[i].size(); ++j) {
       std::tm tm = {};
       std::stringstream ss(temp[i][j]);
       ss >> std::get_time(&tm, "%b %d %Y %H:%M:%S");
       auto tp = std::chrono::system_clock::from_time_t(std::mktime(&tm));
-      d[temp[i][0]].push_back(j);
+      d[temp[i][0]].push_back(tp);
     }
   }
 
   return d;
 }
 
+auto write(unordered_map<string, vector<chrono::time_point<chrono::system_clock>>> &contents,
+           int days,
+           const string &archive_meta_path) {
+  std::ofstream ofs(archive_meta_path);
+  for (auto &[k, times]: contents) {
+    ofs << k << ",";
+    for (auto &time: times) {
+      auto ktime = std::chrono::system_clock::to_time_t(time);
+      ofs << std::put_time(std::localtime(&ktime), "%b %d %Y %H:%M:%S") << ",";
+    }
+    ofs << "\n";
+  }
+  ofs.close();
+}
+
+auto select_next(unordered_map<string, vector<chrono::time_point<chrono::system_clock>>> &contents) -> string {
+  if(contents.empty()){
+    return "";
+  }
+  vector<pair<int, string>> sorter;
+  int max_diff = 0;
+  for(auto &[s, times] : contents) {
+    if(times.size() < 2) {
+      sorter.emplace_back(INT_MAX, s);
+    } else {
+      int delta = chrono::duration_cast<days_type>(times[times.size()-1] - times[times.size()-2]).count();
+      max_diff = max(max_diff, delta);
+      sorter.emplace_back(delta, s);
+    }
+  }
+
+  for(auto &[days, name] : sorter) {
+    if(days == INT_MAX) {
+      days = max_diff;
+    }
+  }
+
+
+  sort(sorter.begin(), sorter.end());
+  srand (time(NULL));
+  int ind = rand() % MAX_LIMIT;
+  if(ind > sorter.size()) ind = sorter.size()-1;
+  return sorter[ind].second;
+}
+
 int main() {
 
   string path = ARCHIVE_PATH;
-  string archive_meta = string(ARCHIVE_PATH) + "/" + "archive_meta.txt";
+  string archive_meta = string(ARCHIVE_PATH) + "/" + "_archive_meta.txt";
 
   if (!fs::exists(archive_meta)) {
     std::ofstream ofs(archive_meta);
@@ -78,11 +127,71 @@ int main() {
 
   //read file
   auto file_contents = read_file(archive_meta);
-  auto content = parse(file_contents);
+  auto contents = parse(file_contents);
 
+  vector<string> keys;
   for (const auto &entry: fs::directory_iterator(path)) {
     string filename = entry.path().filename().string();
+    keys.push_back(filename);
+
+    if (contents.find(filename) == contents.end()) {
+      contents[filename].push_back(std::chrono::system_clock::now());
+    }
   }
 
+  cout << "Randomizer running...\n";
 
+  string selected_file = select_next(contents);
+  if(selected_file.empty()) {
+    cout << "No exercise found, archive folder is empty\n";
+    return 0;
+  }
+  if(contents.find(selected_file) == contents.end()) {
+    cout << selected_file << " not found in archive folder\n";
+    return 0;
+  }
+  cout << "Sovle this file: " << selected_file << "\n";
+
+  cout << "Difficulty\n" <<
+       " (1). Delayed\n" <<
+       " (2). Unsure\n" <<
+       " (3). Decent\n" <<
+       " (4). Good\n" <<
+       " (5). Ez\n" <<
+       " (6). Give up\n" <<
+       "Enter difficulty: ";
+
+  int days = 0;
+  bool shouldRun = true;
+  int input2;
+  cin >> input2;
+  do {
+    shouldRun = false;
+    switch (input2) {
+      case 1:
+        days = DELAY;
+        break;
+      case 2:
+        days = UNSURE;
+        break;
+      case 3:
+        days = DECENT;
+        break;
+      case 4:
+        days = GOOD;
+        break;
+      case 5:
+        days = EZ;
+        break;
+      default:
+        shouldRun = false;
+    }
+  } while (shouldRun);
+
+  auto new_solved = contents[selected_file].back() + std::chrono::hours(days * 24);
+  contents[selected_file].push_back(new_solved);
+
+  write(contents, days, archive_meta);
+
+  return 0;
 }
