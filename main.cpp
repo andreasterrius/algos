@@ -23,58 +23,82 @@ typedef unsigned long long ull;
                 cout << "\n"; }
 #define MODL 1000000007
 
-/*
- * Accepted with peeking
- * Combination Sum
- * Use backtracking if we want unique result with path specified
- * */
+vector<pair<string, string>> roman = {
+    {"I", "V"}, //1, 5
+    {"X", "L"}, //10, 50
+    {"C", "D"}, //100, 500
+    {"M", ""}, //1000
+    {"", ""}
+};
 
+/**
+ * AC, but not optimal, can be done in O(1) using array trickery
+ */
 class Solution {
 public:
 
-  bool dfs(vector<int> curr, vector<vector<int>> &ans, vector<int> &cand, int currIndex, int sum, int target){
-    if(sum == target) {
-      ans.push_back(curr);
-      return true;
+  int len(int num) {
+    int k = num;
+    int l = 0;
+    while (k != 0) {
+      k = k / 10;
+      l++;
     }
-    if(sum > target) {
-      return true;
-    }
-    for(int i = currIndex; i < cand.size(); ++i){
-      curr.push_back(cand[i]);
-      auto k = dfs(curr, ans, cand, i, sum+cand[i], target);
-      curr.pop_back();
-      if(k) {
-        return false;
-      }
-    }
-    return false;
+    return l;
   }
 
-  vector<vector<int>> combinationSum(vector<int> &candidates, int target) {
-    sort(candidates.begin(), candidates.end());
+  //X
+  //XX
+  //XXX
+  //XL
+  //L
+  //LX
+  //LXX
+  //XC
+  //C
+  string getRoman(int len, int firstNumber) {
+    string left = roman[len].first;
+    string right = roman[len].second;
+    string bottom = roman[len + 1].first;
+    string ans = "";
+    if (firstNumber <= 3) {
+      for (int i = 0; i < firstNumber; ++i) {
+        ans += left;
+      }
+    } else if (firstNumber == 4) {
+      ans = left + right;
+    } else if (firstNumber <= 8) {
+      ans = right;
+      for (int i = 5; i < firstNumber; ++i) {
+        ans += left;
+      }
+    } else if (firstNumber == 9) {
+      ans = left + bottom;
+    }
+    return ans;
+  }
 
-    vector<vector<int>> ans;
-    dfs({}, ans, candidates, 0, 0, target);
+  string intToRoman(int num) {
+    string ans = "";
+    int d = num;
+    while (true) {
+      int l = len(d);
+      int divisor = pow(10, l - 1);
+      int firstNumber = d / divisor;
+      ans += getRoman(l-1, firstNumber);
+      d=d%divisor;
+      if(l == 1 || d == 0) break;
+    }
+
     return ans;
   }
 };
 
-/**
- * 7
- * 1 2 4 6 7
- *
- *
- */
-
 int main() {
 
   Solution S;
-  vector<int> cand{2, 3, 6, 7};
-  auto k = S.combinationSum(cand, 7);
-  for (auto d: k) {
-    debuglist(d);
-  }
+  auto k = S.intToRoman(1994);
+  cout << k;
 
   return 0;
 }
