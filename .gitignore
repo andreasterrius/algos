@@ -7,3 +7,4 @@ algos.sln
 *.out
 .vscode/
 randomizer_meta.hpp
+*.exe
