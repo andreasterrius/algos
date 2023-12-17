@@ -8,3 +8,5 @@ algos.sln
 .vscode/
 randomizer_meta.hpp
 *.exe
+cmake-build-release
+out/
