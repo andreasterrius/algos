@@ -36,11 +36,27 @@ vector<string> readFile(string path) {
     return res;
 }
 
-int main() {
-    int a, b;
-    cin >> a >> b;
+void solve() {
+    int count;
+    cin >> count;
+    int runningSum = 0;
+    bool isPositive = true;
+    for(int i = 0; i < count; ++i) {
+        int num;
+        cin >> num;
+        runningSum += isPositive ? num : -num;
+        isPositive = !isPositive;
+    }
 
-    cout << 6 - a - b;
+    cout << runningSum << "\n";
+}
+
+int main() {
+    int n;
+    cin >> n;
+    for(int i = 0; i < n; ++i) {
+        solve();
+    }
 
     return 0;
 }
