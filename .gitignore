@@ -10,3 +10,4 @@ randomizer_meta.hpp
 *.exe
 cmake-build-release
 out/
+build/

@@ -28,19 +28,37 @@ typedef pair<ull, ull> pull;
                 cout << "\n"; }
 #define MODL 1000000007
 
-vector<string> readFile(string path) {
-    vector<string> res;
-    std::ifstream file(path);
-    for (std::string line; std::getline(file, line); res.push_back(line));
-    file.close();
-    return res;
-}
-
 int main() {
-    int a, b;
-    cin >> a >> b;
+    vector<ull> original;
+    unordered_map<ull, ull> nums;
+    int n;
+    cin >> n;
+    for(int i = 0; i < n; ++i) {
+        ull a;
+        cin >> a;
+        original.push_back(a);
+    }
 
-    cout << 6 - a - b;
+    ull lastSum = 0;
+    for (int i = 1; i < original.size(); ++i) {
+        ull now = original[i] + original[i-1];
+        if(nums.find(now) == nums.end()) {
+            nums[now] = 0;
+        }
+        if(now == lastSum) { lastSum = 0; }
+        else {
+            nums[now] += 1;
+            lastSum = now;
+        }
+    }
+
+    ull answ = 0;
+    for(auto &[k, v] : nums) {
+        answ = max(answ, v);
+    }
+    cout << answ << endl;
 
     return 0;
 }
+
+// 2 2 1 2 2 1
