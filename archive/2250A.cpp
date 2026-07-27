@@ -36,73 +36,39 @@ typedef pair<ull, ull> pull;
 
 int main() {
 
-  int cas;
-  cin >> cas;
-
-  unordered_map<ull, int> ctr;
-  unordered_map<ull, int> d;
-  while (cas--) {
+  int tc;
+  cin >> tc;
+  for (int i = 0; i < tc; ++i) {
     int n;
     cin >> n;
 
-    ctr.clear();
-    d.clear();
+    ull arr[101];
+    for (int j = 0; j < n; ++j) {
+      cin >> arr[j];
+    }
 
-    for (int i = 0; i < n; ++i) {
-      ull num;
-      scanf("%llu", &num);
-
-      if (num == 1) {
-        if (d.find(2) == d.end()) {
-          d[2] = 0;
-        }
-        if (ctr.find(2) == ctr.end()) {
-          ctr[2] = 0;
-        }
-        d[2] += 1;
-        ctr[2] += 1;
-      }
-
-      int step = 0;
-      while (true) {
-        if (i == 0) {
-          d[num] += step;
-          ctr[num] += 1;
-        } else {
-          if (d.find(num) != d.end()) {
-            d[num] += step;
-          }
-          if (ctr.find(num) != ctr.end()) {
-            ctr[num] += 1;
-          }
-        }
-
-        if (num == 1)
+    bool yes = true;
+    if (n % 2 == 1) {
+      yes = false;
+    } else {
+      ull lb = 0;
+      ull ub = ULONG_MAX;
+      for (int j = 0; j < n; j += 2) {
+        if (arr[j + 1] > lb)
+          lb = arr[j + 1];
+        if (arr[j] < ub)
+          ub = arr[j];
+        if (ub <= lb + 1) {
+          yes = false;
           break;
-
-        if (num % 2 == 0)
-          num /= 2;
-        else
-          num += 1;
-        step += 1;
+        }
       }
     }
-
-    cout << "CTR: " << endl;
-    for (auto &[k, v] : ctr) {
-      cout << k << " " << v << endl;
-    }
-    cout << "COST: " << endl;
-    for (auto &[k, v] : d) {
-      cout << k << " " << v << endl;
-    }
-
-    int ans = INT_MAX;
-    for (auto &[k, v] : ctr) {
-      if (v == n) {
-        ans = min(ans, d[k]);
-      }
-    }
-    printf("%d\n", ans);
+    if (yes)
+      cout << "YES\n";
+    else
+      cout << "NO\n";
   }
+
+  return 0;
 }
