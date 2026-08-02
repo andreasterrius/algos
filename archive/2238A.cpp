@@ -34,47 +34,53 @@ typedef pair<ull, ull> pull;
   }
 #define MODL 1000000007
 
-struct Node {
-  int height;
-  vector<Node *> childs;
-};
-
-ll ans = 0;
-int dfs(Node *n) {
-  int height = -1;
-  int secondLargest = -1;
-  for (int i = 0; i < n->childs.size(); ++i) {
-    int childHeight = dfs(n->childs[i]);
-    if (childHeight > height) {
-      secondLargest = height;
-      height = childHeight;
-    } else if (childHeight > secondLargest) {
-      secondLargest = childHeight;
-    }
-  }
-  if (secondLargest >= 0) {
-    ans += secondLargest + 1;
-  }
-  return height + 1;
-}
-
 void tc() {
-  int n;
-  cin >> n;
-  vector<Node *> tree;
-  tree.push_back(new Node()); // unused;
-  for (int i = 0; i < n; ++i) {
-    tree.push_back(new Node());
-  }
-  for (int i = 2; i <= n; ++i) {
-    int parent;
-    cin >> parent;
-    tree[parent]->childs.push_back(tree[i]);
-  }
-  ans = n;
-  dfs(tree[1]);
+  int n, c;
+  cin >> n >> c;
 
-  cout << ans << "\n";
+  vector<int> aa(n, 0);
+  vector<int> bb(n, 0);
+  for (int i = 0; i < n; ++i) {
+    cin >> aa[i];
+  }
+  for (int i = 0; i < n; ++i) {
+    cin >> bb[i];
+  }
+
+  int noSwap = 0;
+  vector<int> ns(aa);
+  for (int i = 0; i < ns.size(); ++i) {
+    if (ns[i] < bb[i]) {
+      // it's joever, need a swap.
+      noSwap = -1;
+      break;
+    }
+    int diff = ns[i] - bb[i];
+    noSwap += diff;
+  }
+
+  int withSwap = c;
+  sort(aa.begin(), aa.end());
+  sort(bb.begin(), bb.end());
+  for (int i = 0; i < aa.size(); ++i) {
+    if (aa[i] < bb[i]) {
+      // it's joever over
+      withSwap = -1;
+      break;
+    }
+    int diff = aa[i] - bb[i];
+    withSwap += diff;
+  }
+
+  if (noSwap == -1 && withSwap == -1) {
+    cout << "-1\n";
+  } else {
+    if (noSwap == -1)
+      noSwap = INT_MAX;
+    if (withSwap == -1)
+      withSwap = INT_MAX;
+    cout << min(noSwap, withSwap) << "\n";
+  }
 }
 
 int main() {
