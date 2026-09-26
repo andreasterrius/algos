@@ -34,10 +34,37 @@ typedef pair<ull, ull> pull;
   }
 #define MODL 1000000007
 
-// 0?? 011
-//
+void tc() {
+  int n, m;
+  cin >> n >> m;
+  vector<int> aa(n, 0);
+  vector<int> bb(m, 0);
+  for (int i = 0; i < n; ++i) {
+    cin >> aa[i];
+  }
+  for (int i = 0; i < m; ++i) {
+    cin >> bb[i];
+  }
+  if (n / 2 < m) {
+    cout << "NO\n";
+    return;
+  }
+  sort(aa.begin(), aa.end());
+  sort(bb.begin(), bb.end());
 
-void tc() {}
+  int l = 0, r = n - m;
+  for (int i = 0; i < m; ++i) {
+    if (bb[i] > aa[l] && bb[i] < aa[r]) {
+      l++;
+      r++;
+    } else {
+      cout << "NO\n";
+      return;
+    }
+  }
+
+  cout << "YES\n";
+}
 
 int main() {
   // ios_base::sync_with_stdio(false);
@@ -49,3 +76,6 @@ int main() {
   }
   return 0;
 }
+
+// 1 2 3 4 5
+// 5 4 3 2 1
