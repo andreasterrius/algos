@@ -34,17 +34,54 @@ typedef pair<ull, ull> pull;
   }
 #define MODL 1000000007
 
-// 0?? 011
-//
+void dfs(unordered_map<int, vector<int>> &edges, unordered_set<int> &dams,
+         int currNode, int &connectedDamCount, vector<int> &answ) {
 
-void tc() {}
+  if (connectedDamCount <= 1) {
+    return;
+  }
 
-int main() {
-  // ios_base::sync_with_stdio(false);
-  // cin.tie(nullptr);
+  for (int i = 0; i < edges[currNode].size(); ++i) {
+    dfs(edges, dams, edges[currNode][i], connectedDamCount, answ);
+  }
+
+  if (dams.find(currNode) != dams.end() && connectedDamCount > 1) {
+    answ.push_back(currNode);
+    connectedDamCount--;
+  }
+}
+
+void tc() {
   int n;
   cin >> n;
-  for (int i = 0; i < n; ++i) {
+
+  unordered_map<int, vector<int>> edges;
+  unordered_set<int> dams;
+  for (int i = 0; i < n - 1; ++i) {
+    int parent;
+    cin >> parent;
+    edges[parent].push_back(i + 2);
+  }
+
+  int m;
+  cin >> m;
+  for (int i = 0; i < m; ++i) {
+    int dam;
+    cin >> dam;
+    dams.insert(dam);
+  }
+
+  vector<int> answ;
+  dfs(edges, dams, 1, m, answ);
+
+  cout << answ.size() << " ";
+  debuglist(answ);
+}
+
+int main() {
+  int n;
+  cin >> n;
+  while (n--) {
     tc();
   }
   return 0;
